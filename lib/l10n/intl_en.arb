@@ -1,0 +1,14 @@
+{
+  "load_failed": "Load failed",
+  "load_image": "Load image",
+  "home": "Trang chủ",
+  "press_button": "Press button",
+  "setting": "Setting",
+  "english": "English",
+  "russian": "Russian",
+  "dark_mode": "Dark mode",
+  "assets": "Assets gen",
+  "delete_success": "Delete success",
+  "delete_failed": "Delete failed",
+  "didnt_supported": "Didn`t support"
+}

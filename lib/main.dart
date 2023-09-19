@@ -1,12 +1,8 @@
-
-
-import 'config/app_config.dart';
+import 'package:flutter_template/bootstrap.dart';
+import 'package:flutter_template/config/dev_config.dart';
 
 Future<void> main() async {
   await bootstrap(
-    firebaseInitialization: () async {},
-    flavorConfiguration: () async {
-      AppConfig.configDev();
-    },
+    config: DevConfig(),
   );
 }

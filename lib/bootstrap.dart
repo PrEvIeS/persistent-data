@@ -1,32 +1,64 @@
 import 'dart:async';
-import 'package:boilerplate/core/bloc_core/bloc_observer.dart';
-import 'package:boilerplate/features/app/view/app.dart';
-import 'package:boilerplate/injector/injector.dart';
-import 'package:boilerplate/services/crashlytics_service/crashlytics_service.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_template/config/config.dart';
+import 'package:flutter_template/core/bloc/bloc_observer.dart';
+import 'package:flutter_template/services/app_service/app_service.dart';
+import 'package:flutter_template/services/app_service/app_service_impl.dart';
+import 'package:flutter_template/services/crashlytics_service/crashlytics_service.dart';
+import 'package:flutter_template/services/crashlytics_service/firebase_crashlytics_service.dart';
+import 'package:flutter_template/services/http_service/dio.dart';
+import 'package:flutter_template/usecases/app/bloc/app_bloc.dart';
+import 'package:flutter_template/usecases/app/view/app.dart';
+import 'package:get_it/get_it.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logger/logger.dart';
 
 Future<void> bootstrap({
-  AsyncCallback? firebaseInitialization,
-  AsyncCallback? flavorConfiguration,
+  BaseConfig? config,
 }) async {
   await runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
+    await Hive.initFlutter();
+    await Hive.openBox('settings');
 
-    await firebaseInitialization?.call();
-    Logger.level = Level.verbose;
-    await flavorConfiguration?.call();
+    Logger.level = config!.logLevel;
 
-    Injector.init();
+    DioClient.setup(config);
 
-    await Injector.instance.allReady();
+    GetIt.instance
+      ..registerSingletonAsync<CrashlyticsService>(() async {
+        return FirebaseCrashlyticsService();
+      })
+      ..registerSingleton<AppService>(
+        AppServiceImpl(),
+      )
+      ..registerFactory(
+        () => Logger(
+          printer: PrefixPrinter(
+            PrettyPrinter(
+              methodCount: 0,
+              errorMethodCount: 500,
+              lineLength: 100,
+            ),
+          ),
+        ),
+      )
+      ..registerLazySingleton<AppBloc>(
+        () => AppBloc(
+          appService: GetIt.instance(),
+          logService: GetIt.instance(),
+        ),
+      );
+
+    await GetIt.instance.allReady();
 
     Bloc.observer = AppBlocObserver();
 
     runApp(const App());
   }, (error, stack) {
-    Injector.instance<CrashlyticsService>().recordException(error, stack);
+    throw error;
+    GetIt.instance<CrashlyticsService>().recordException(error, stack);
   });
 }

@@ -45,3 +45,5 @@ app.*.map.json
 
 # Flutter gen code
 /lib/generated
+*.g.dart
+*.freezed.dart
