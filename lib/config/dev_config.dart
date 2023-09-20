@@ -1,4 +1,4 @@
-import 'package:flutter_template/config/config.dart';
+import 'package:flutter_template/config/base_config.dart';
 import 'package:logger/logger.dart';
 
 class DevConfig implements BaseConfig {
