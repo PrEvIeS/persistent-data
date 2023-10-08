@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_template/config/base_config.dart';
 import 'package:flutter_template/core/bloc/bloc_observer.dart';
+import 'package:flutter_template/data/models/category.dart';
+import 'package:flutter_template/data/repositories/category_repository.dart';
+import 'package:flutter_template/data/repositories/category_repository_interface.dart';
 import 'package:flutter_template/services/app_service/app_service.dart';
 import 'package:flutter_template/services/app_service/app_service_impl.dart';
 import 'package:flutter_template/services/crashlytics_service/crashlytics_service.dart';
@@ -11,6 +14,7 @@ import 'package:flutter_template/services/crashlytics_service/firebase_crashlyti
 import 'package:flutter_template/services/http_service/dio.dart';
 import 'package:flutter_template/usecases/app/bloc/app_bloc.dart';
 import 'package:flutter_template/usecases/app/view/app.dart';
+import 'package:flutter_template/usecases/home/cubit/home_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logger/logger.dart';
@@ -21,8 +25,9 @@ Future<void> bootstrap({
   await runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Hive.initFlutter();
+    Hive.registerAdapter(CategoryAdapter());
     await Hive.openBox('settings');
-
+    Box<Category> categories = await Hive.openBox<Category>('categories');
     Logger.level = config!.logLevel;
 
     DioClient.setup(config);
@@ -33,6 +38,9 @@ Future<void> bootstrap({
       })
       ..registerSingleton<AppService>(
         AppServiceImpl(),
+      )
+      ..registerFactory<CategoryRepositoryInterface>(
+        () => CategoryRepository(categoryBox: categories),
       )
       ..registerFactory(
         () => Logger(
@@ -49,6 +57,11 @@ Future<void> bootstrap({
         () => AppBloc(
           appService: GetIt.instance(),
           logService: GetIt.instance(),
+        ),
+      )
+      ..registerLazySingleton<HomeCubit>(
+        () => HomeCubit(
+          categoryRepository: GetIt.instance<CategoryRepositoryInterface>(),
         ),
       );
 

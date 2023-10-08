@@ -24,7 +24,7 @@ and generate languages, freezed, flutter gen:
 ```cmd
 flutter pub get
 flutter pub run intl_utils:generate
-flutter pub run build_runner build --delete-conflicting-outputs
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 **Step 3:**
@@ -32,7 +32,7 @@ Go to `/packages/rest_client` and execute the following command in terminal to g
 api client:
 
 ```cmd
-flutter pub get && flutter pub run build_runner build --delete-conflicting-outputs
+flutter pub get && dart run build_runner build --delete-conflicting-outputs
 ```
 
 **Whenever change freezed file, assets, api**
