@@ -23,8 +23,8 @@ and generate languages, freezed, flutter gen:
 
 ```cmd
 flutter pub get
-flutter pub run intl_utils:generate
-flutter pub run build_runner build --delete-conflicting-outputs
+dart run intl_utils:generate
+dart run build_runner build --delete-conflicting-outputs
 ```
 
 **Step 3:**
@@ -40,7 +40,7 @@ flutter pub get && flutter pub run build_runner build --delete-conflicting-outpu
 Run command
 
 ```cmd
-flutter pub get && flutter pub run build_runner build --delete-conflicting-outputs
+flutter pub get && dart run build_runner build --delete-conflicting-outputs
 ```
 
 ## Folder structure

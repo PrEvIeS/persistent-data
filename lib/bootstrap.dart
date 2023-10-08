@@ -58,6 +58,7 @@ Future<void> bootstrap({
 
     runApp(const App());
   }, (error, stack) {
-    GetIt.instance<CrashlyticsService>().recordException(error, stack);
+    print(error);
+    //GetIt.instance<CrashlyticsService>().recordException(error, stack);
   });
 }
